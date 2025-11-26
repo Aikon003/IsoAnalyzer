@@ -1,0 +1,9 @@
+FROM weishwu/isoform_sequence_analysis:08202020
+
+# ---  IsoformSwitchAnalyzeR dependencies ---
+RUN git clone https://github.com/weishwu/isoformSwitchAnalyzeR.git /opt/isoformSwitchAnalyzeR \
+    && chmod +x /opt/isoformSwitchAnalyzeR/split_AA_fasta.py \
+    && chmod +x /opt/isoformSwitchAnalyzeR/modify_gtf.py
+ENV PATH="/opt/isoformSwitchAnalyzeR:${PATH}"
+
+
