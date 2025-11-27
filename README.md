@@ -8,21 +8,31 @@ This pipeline performs comprehensive RNA-Seq analysis, focusing on alignment, qu
 
 ## Table of contents
 
+## Table of Contents
 
-- [# Installation and Usage](#Installation-and-Usage)
-  * [Docker](#Docker)
-  * [Execution]
-- [Usage](#usage)
-  * [Examples](#examples)
-    + [SAM files with rMATS event](#sam-files-with-rmats-event)
-    + [BAM files with coordinate and annotation](#bam-files-with-coordinate-and-annotation)
-    + [Using a group file](#using-a-group-file)
-  * [Grouping](#grouping)
-  * [FAQ](#faq)
-  * [All arguments](#all-arguments)
-- [Output](#output)
-- [Contacts and bug reports](#contacts-and-bug-reports)
-- [Copyright and License Information](#copyright-and-license-information)
+- [Overview](#overview)
+- [Installation and Usage](#installation-and-usage)
+  * [Docker](#docker)
+  * [Execution](#execution)
+- [Pipeline Workflow](#pipeline-workflow)
+  * [Preprocessing](#preprocessing)
+  * [Alignment and Deduplication](#alignment-and-deduplication)
+  * [Quantification](#quantification)
+  * [Alternative Splicing Detection](#alternative-splicing-detection)
+  * [Isoform Quantification](#isoform-quantification)
+  * [Data Filtering](#data-filtering)
+- [Functional Consequence Analysis](#functional-consequence-analysis)
+  * [Step 1: Preliminary Analysis](#step-1-preliminary-analysis)
+  * [Step 2: External Protein Analysis](#step-2-external-protein-analysis)
+  * [Step 3: Final Integration](#step-3-final-integration)
+- [Configuration Settings](#configuration-settings)
+  * [Preprocessing and QC](#preprocessing-and-qc)
+  * [UMI Handling](#umi-handling)
+  * [Genome Alignment (STAR)](#genome-alignment-star)
+  * [Splicing Analysis](#splicing-analysis)
+  * [Transcriptome Quantification (RSEM)](#transcriptome-quantification-rsem)
+- [Bibliography](#Bibliography)
+ *[References](#references)
 
 # Installation and Usage
 
