@@ -32,9 +32,10 @@ Gene-level counting is performed using featureCounts.
 
 Splicing events are identified using rMATS Turbo and SplAdder. Users can choose to run either program individually or both simultaneously.
 
-### GTF Addition: When SplAdder is enabled, the pipeline offers a "GTF Addition" option. This generates an updated GTF file incorporating novel splicing events detected by SplAdder, which is then used for subsequent analysis steps.
+### GTF Addition: 
+When SplAdder is enabled, the pipeline offers a "GTF Addition" option. This generates an updated GTF file incorporating novel splicing events detected by SplAdder, which is then used for subsequent analysis steps.
 
-##Isoform Quantification
+## Isoform Quantification
 
 Isoform-level quantification is handled by RSEM. This step requires alignment to the transcriptome rather than the genome. The pipeline can either accept pre-existing transcriptomic BAM files or generate them directly based on the provided settings.
 
