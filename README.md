@@ -76,11 +76,11 @@ Outputs from the detection tools undergo a filtering phase to retain only statis
 
 The final stage utilizes IsoformSwitchAnalyzeR to evaluate isoform switches and predict their functional impact on proteins. This analysis is divided into three distinct steps involving two different environments.
 
-### Step 1: 
-Preliminary Analysis Executed within the main pipeline/container. This step filters data, performs statistical testing, and reconstructs amino acid sequences.
+### Step 1: Preliminary Analysis Executed within the main pipeline/container. 
+This step filters data, performs statistical testing, and reconstructs amino acid sequences.
 
-### Step 2: 
-External Protein Analysis This step requires the External Protein Analysis Bash script. Note: This script must be executed using the second Dockerfile provided (the sequence analysis container). 
+### Step 2: External Protein Analysis 
+This step requires the External Protein Analysis Bash script. Note: This script must be executed using the second Dockerfile provided (the sequence analysis container). 
 
 It runs the following external tools to annotate the amino acid sequences generated in Step 1:
 
@@ -92,8 +92,7 @@ It runs the following external tools to annotate the amino acid sequences genera
 
    IUPred2A (Disordered Regions)
   
-### Step 3: 
-Final Integration Executed via the IsoformSwitchAnalyzer_Final.R script. 
+### Step 3: Final Integration Executed via the IsoformSwitchAnalyzer_Final.R script. 
 Note: This script must be run using the primary Dockerfile. It requires the output directories from the External Protein Analysis (Step 2) as arguments to integrate the functional annotations and generate final visualizations.
 
 
