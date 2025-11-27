@@ -69,7 +69,8 @@ The final stage utilizes IsoformSwitchAnalyzeR to evaluate isoform switches and 
 Preliminary Analysis Executed within the main pipeline/container. This step filters data, performs statistical testing, and reconstructs amino acid sequences.
 
 ### Step 2: 
-External Protein Analysis This step requires the External Protein Analysis Bash script. Note: This script must be executed using the second Dockerfile provided (the sequence analysis container). It runs the following external tools to annotate the amino acid sequences generated in Step 1:
+External Protein Analysis This step requires the External Protein Analysis Bash script. Note: This script must be executed using the second Dockerfile provided (the sequence analysis container). 
+It runs the following external tools to annotate the amino acid sequences generated in Step 1:
 
     CPAT (Coding Potential)
 
