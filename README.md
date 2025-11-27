@@ -105,9 +105,10 @@ The pipeline behavior is controlled via the `settings.xlsx` file. Below are the 
 * **`trimming`**: Set to `TRUE` to enable adapter and quality trimming.
 * **`fastqc`**: Set to `TRUE` to enable FastQC analysis.
 * **`mode`**: Sequencing mode: `single` or `paired` (Required if alignment or trimming is enabled).
-* **`adapter`**, **`adapter2`**: Adapter sequences to trim for Read 1 and Read 2, respectively (If left blank, automatic adapter detection will be used.).
-* **`clip_5_1`**, **`clip_5_2`**: Number of bases to clip from the 5' end of Read 1 and Read 2.
-* **`clip_3_1`**, **`clip_3_2`**: Number of bases to clip from the 3' end of Read 1 and Read 2.
+* Not mandatory
+  * **`adapter`**, **`adapter2`**: Adapter sequences to trim for Read 1 and Read 2, respectively (If left blank, automatic adapter detection will be used.).
+  * **`clip_5_1`**, **`clip_5_2`**: Number of bases to clip from the 5' end of Read 1 and Read 2.
+  * **`clip_3_1`**, **`clip_3_2`**: Number of bases to clip from the 3' end of Read 1 and Read 2.
 
 ### UMI Handling
 * **`UMI`**: Set to `TRUE` to perform UMI extraction and deduplication.
