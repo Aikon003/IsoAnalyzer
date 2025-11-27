@@ -149,7 +149,7 @@ The pipeline behavior is controlled via the `settings.xlsx` file. Below are the 
 
 #### Preprocessing & Quality Control
 
-  * **FastQC**: Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data. Available online at: [http://www.bioinformatics.babraham.ac.uk/projects/fastqc/](https://www.google.com/search?q=http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+  * **FastQC**: Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data. Available online at: [http://www.bioinformatics.babraham.ac.uk/projects/fastqc/](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
   * **fastp**: Chen, S., Zhou, Y., Chen, Y., & Gu, J. (2018). fastp: an ultra-fast all-in-one FASTQ preprocessor. *Bioinformatics*, 34(17), i884-i890. [https://doi.org/10.1093/bioinformatics/bty560](https://doi.org/10.1093/bioinformatics/bty560)
   * **Trim Galore**: Krueger, F. (2015). Trim Galore\!: A wrapper around Cutadapt and FastQC to consistently apply adapter and quality trimming to FastQ files. Available online at: [https://github.com/FelixKrueger/TrimGalore](https://github.com/FelixKrueger/TrimGalore)
 
