@@ -32,7 +32,7 @@ This pipeline performs comprehensive RNA-Seq analysis, focusing on alignment, qu
   * [Splicing Analysis](#splicing-analysis)
   * [Transcriptome Quantification (RSEM)](#transcriptome-quantification-rsem)
 - [Bibliography](#Bibliography)
- *[References](#references)
+  *[References](#references)
 
 # Installation and Usage
 
