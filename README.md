@@ -70,15 +70,16 @@ Preliminary Analysis Executed within the main pipeline/container. This step filt
 
 ### Step 2: 
 External Protein Analysis This step requires the External Protein Analysis Bash script. Note: This script must be executed using the second Dockerfile provided (the sequence analysis container). 
+
 It runs the following external tools to annotate the amino acid sequences generated in Step 1:
 
-    CPAT (Coding Potential)
+   CPAT (Coding Potential)
 
-    Pfam (Protein Domains)
+   Pfam (Protein Domains)
 
-    SignalP (Signal Peptides)
+   SignalP (Signal Peptides)
 
-    IUPred2A (Disordered Regions)
+   IUPred2A (Disordered Regions)
   
 ### Step 3: 
 Final Integration Executed via the IsoformSwitchAnalyzer_Final.R script. 
