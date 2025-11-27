@@ -33,6 +33,7 @@ This pipeline performs comprehensive RNA-Seq analysis, focusing on alignment, qu
   * [Transcriptome Quantification (RSEM)](#transcriptome-quantification-rsem)
 - [Bibliography](#Bibliography)
   * [References](#references)
+  * [Acknowledgments](#Acknowledgments)
 
 # Installation and Usage
 
@@ -172,4 +173,10 @@ The pipeline behavior is controlled via the `settings.xlsx` file. Below are the 
 #### Functional Consequence Analysis
 
   * **IsoformSwitchAnalyzeR**: Vitting-Seerup, K., & Sandelin, A. (2019). IsoformSwitchAnalyzeR: Analysis of changes in genome-wide patterns of alternative splicing and its functional consequences. [cite\_start]*Bioinformatics*, 35(21), 4469-4471[cite: 1722, 2179]. [https://doi.org/10.1093/bioinformatics/btz247](https://doi.org/10.1093/bioinformatics/btz247)
+
+## Acknowledgments
+
+The concept for the script structure originated from a collaboration with **Sara Bianchi** from the **HEDGe Lab** (University of Turin).
+
+Original repository: [https://github.com/sara-bianchi/Bulk_RNA_seq_pipeline](https://github.com/sara-bianchi/Bulk_RNA_seq_pipeline)
 
