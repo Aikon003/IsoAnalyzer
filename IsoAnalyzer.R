@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-#BULK RNA SEQ
+#Isoform Analyzer
 #------------------------------------------------------------------------------
 
 #packages
@@ -15,17 +15,8 @@ library(ggplot2)
 
 
 #set up environment
-theme_set(theme_bw(12) +
-            theme(panel.grid.major = element_blank(),
-                  panel.grid.minor = element_blank(),
-                  plot.title = element_text(size = 15, face = "bold", margin = margin(10, 0, 10, 0)),
-                  axis.text.x = element_text(angle = 45, hjust = 1)))
-options(stringsAsFactors = FALSE)
-update_geom_defaults("point", aes(size = 4))
+
 set.seed(1234)
-
-pal <- c("#3283FE", "#FA0087", "#009E73", "#FBE426", "#56B4E9", "#FEAF16", "#DEA0FD", "#1CBE4F", "#F6222E", "#1CFFCE", "#325A9B", "#AA0DFE","#D55E00", "#2ED9FF", "#f0E442", "#1C8356", "#0072B2", "#CC79A7")
-
 current_time <- format(Sys.time(), "%y%m%d")
 dir.create(paste0("./Output_", current_time))
 
