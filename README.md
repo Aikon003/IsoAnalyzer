@@ -62,4 +62,5 @@ External Protein Analysis This step requires the External Protein Analysis Bash 
     IUPred2A (Disordered Regions)
   
 ### Step 3: 
-Final Integration Executed via the IsoformSwitchAnalyzer_Final.R script. Note: This script must be run using the primary Dockerfile. It requires the output directories from the External Protein Analysis (Step 2) as arguments to integrate the functional annotations and generate final visualizations.
+Final Integration Executed via the IsoformSwitchAnalyzer_Final.R script. 
+Note: This script must be run using the primary Dockerfile. It requires the output directories from the External Protein Analysis (Step 2) as arguments to integrate the functional annotations and generate final visualizations.
