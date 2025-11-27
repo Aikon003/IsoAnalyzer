@@ -158,7 +158,7 @@ The pipeline behavior is controlled via the `settings.xlsx` file. Below are the 
   * **STAR**: Dobin, A., Davis, C. A., Schlesinger, F., Drenkow, J., Zaleski, C., Jha, S., ... & Gingeras, T. R. (2013). STAR: ultrafast universal RNA-seq aligner. *Bioinformatics*, 29(1), 15-21. [https://doi.org/10.1093/bioinformatics/bts635](https://doi.org/10.1093/bioinformatics/bts635)
   * **SAMtools**: Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., ... & Li, H. (2021). Twelve years of SAMtools and BCFtools. *GigaScience*, 10(2), giab008. [https://doi.org/10.1093/gigascience/giab008](https://doi.org/10.1093/gigascience/giab008)
   * **UMI-tools**: Smith, T., Heger, A., & Sudbery, I. (2017). UMI-tools: modeling sequencing errors in Unique Molecular Identifiers to improve quantification accuracy. [cite\_start]*Genome Research*, 27(3), 491–499[cite: 28]. [cite\_start][https://doi.org/10.1101/gr.209601.116](https://doi.org/10.1101/gr.209601.116) [cite: 29]
-  * **UMI\_parallel**: A parallel wrapper for UMI-tools. Available online at: [https://github.com/Milda85/UMI\_parallel](https://www.google.com/search?q=https://github.com/Milda85/UMI_parallel)
+  * **UMI\_parallel**: A parallel wrapper for UMI-tools. Available online at: [https://github.com/Milda85/UMI\_parallel](https://github.com/Milda85/UMI_parallel)
 
 #### Quantification
 
