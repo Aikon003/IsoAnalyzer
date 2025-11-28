@@ -347,18 +347,23 @@ if(alignment == TRUE){
 #trimming
 
 
+
+
 if(trimming == TRUE){
   print("starting trimming")
-  dir.create(paste0("./Output_", current_time, "/trimmed"))
+  dir.create(paste0("./Output_", current_time, "/trimmed"), showWarnings = FALSE)
   out_dir = paste0("./Output_", current_time, "/trimmed")
   
   if(mode == "single"){
+    
     for(i in 1:length(rownames(table))){
       sample_ID = table$sample_ID[i]
       fastq = table$fastq[i]
       
       if (UMI == TRUE){
+        # -- Single End + UMI (Fastp) --
         cleaned_fastq = paste0(out_dir, "/", sample_ID, "_umi.fq.gz")
+        
         system2("fastp", paste0(
           "-i ", fastq, " ",
           "-o ", cleaned_fastq, " ",
@@ -372,10 +377,18 @@ if(trimming == TRUE){
           " --html ", out_dir, "/", sample_ID, "_fastp_report.html",
           " --json ", out_dir, "/", sample_ID, "_fastp_report.json"
         ))
+        
+        if(fastqc == TRUE){
+          system2("fastqc", paste0(cleaned_fastq, " -o ", out_dir, " -t ", CPU))
+        }
+        
         fastq = cleaned_fastq
+        
       } else {
         if(is.na(adapter) || adapter == ""){
+          # -- Single End + Auto Adapter (Fastp) --
           cleaned_fastq = paste0(out_dir, "/", sample_ID, "_trimmed.fq.gz")
+          
           system2("fastp", paste0(
             "-i ", fastq, " ",
             "-o ", cleaned_fastq, " ",
@@ -386,8 +399,15 @@ if(trimming == TRUE){
             " --html ", out_dir, "/", sample_ID, "_fastp_report.html",
             " --json ", out_dir, "/", sample_ID, "_fastp_report.json"
           ))
+          
+          if(fastqc == TRUE){
+            system2("fastqc", paste0(cleaned_fastq, " -o ", out_dir, " -t ", CPU))
+          }
+          
           fastq = cleaned_fastq
+          
         } else {
+          # -- Single End + Adapter (Trim Galore) --
           if(clip_3_1 == 0){ clipping_R1_3 = "" } else { clipping_R1_3 = paste0(" --three_prime_clip_R1 ", clip_3_1) }
           if(clip_5_1 == 0){ clipping_R1_5 = "" } else { clipping_R1_5 = paste0(" --clip_R1 ", clip_5_1) }
           
@@ -401,14 +421,18 @@ if(trimming == TRUE){
           ))
         }
       }
+      table$fastq[i] <- fastq
     }
-  } else if(mode == "paired"){
+    
+  } else if(mode == "paired"){ 
+    
     for(i in 1:length(rownames(table))){
       sample_ID = table$sample_ID[i]
       fastq1 = table$fastq1[i]
       fastq2 = table$fastq2[i]
       
       if (UMI == TRUE){
+        # -- Paired End + UMI (Fastp) --
         cleaned_fastq1 = paste0(out_dir, "/", sample_ID, "_umi_R1.fq.gz")
         cleaned_fastq2 = paste0(out_dir, "/", sample_ID, "_umi_R2.fq.gz")
         
@@ -429,10 +453,17 @@ if(trimming == TRUE){
           " --html ", out_dir, "/", sample_ID, "_fastp_report.html",
           " --json ", out_dir, "/", sample_ID, "_fastp_report.json"
         ))
+        
+        if(fastqc == TRUE){
+          system2("fastqc", paste0(cleaned_fastq1, " ", cleaned_fastq2, " -o ", out_dir, " -t ", CPU))
+        }
+        
         fastq1 = cleaned_fastq1
         fastq2 = cleaned_fastq2
+        
       } else {
         if((is.na(adapter) || adapter == "") && (is.na(adapter2) || adapter2 == "")){
+          # -- Paired End + Auto Adapter (Fastp) --
           cleaned_fastq1 = paste0(out_dir, "/", sample_ID, "_val_1.fq.gz")
           cleaned_fastq2 = paste0(out_dir, "/", sample_ID, "_val_2.fq.gz")
           
@@ -450,9 +481,16 @@ if(trimming == TRUE){
             " --html ", out_dir, "/", sample_ID, "_fastp_report.html",
             " --json ", out_dir, "/", sample_ID, "_fastp_report.json"
           ))
+          
+          if(fastqc == TRUE){
+            system2("fastqc", paste0(cleaned_fastq1, " ", cleaned_fastq2, " -o ", out_dir, " -t ", CPU))
+          }
+          
           fastq1 = cleaned_fastq1
           fastq2 = cleaned_fastq2
+          
         } else {
+          # -- Paired End + Adapter (Trim Galore) --
           if(clip_3_1 == 0){ clipping_R1_3 = "" } else { clipping_R1_3 = paste0(" --three_prime_clip_R1 ", clip_3_1) }
           if(clip_5_1 == 0){ clipping_R1_5 = "" } else { clipping_R1_5 = paste0(" --clip_R1 ", clip_5_1) }
           if(clip_3_2 == 0){ clipping_R2_3 = "" } else { clipping_R2_3 = paste0(" --three_prime_clip_R2 ", clip_3_2) }
@@ -470,6 +508,9 @@ if(trimming == TRUE){
           ))
         }
       }
+
+      table$fastq1[i] <- fastq1
+      table$fastq2[i] <- fastq2
     }
   }
   print("finishing trimming")
