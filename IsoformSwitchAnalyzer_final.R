@@ -192,7 +192,8 @@ extractConsequenceSummary(
   asl_data_analyzed,
   consequencesToAnalyze='all',
   plotGenes = FALSE,
-  asFractionTotal = FALSE
+  asFractionTotal = FALSE,
+  returnResult=TRUE
 )
 dev.off()
 
@@ -203,7 +204,7 @@ extractConsequenceEnrichment(
   asl_data_analyzed,
   consequencesToAnalyze='all',
   analysisOppositeConsequence = TRUE,
-  returnResult = FALSE
+  returnResult = TRUE
 )
 dev.off()
 
@@ -225,7 +226,7 @@ pdf(file=file.path(plot_output_dir, 'splicing_enrichment_comparison.pdf'), width
 extractSplicingEnrichmentComparison(
   asl_data_analyzed,
   splicingToAnalyze = c('A3','MES','ATSS','ATTS'),
-  returnResult = FALSE
+  returnResult = TRUE
 )
 
 
@@ -236,7 +237,7 @@ extractConsequenceEnrichmentComparison(
   asl_data_analyzed,
   consequencesToAnalyze=c('domains_identified','intron_retention','coding_potential'),
   analysisOppositeConsequence = TRUE,
-  returnResult = FALSE
+  returnResult = TRUE
 )
 
 # Compare DTUs between comparisons (Venn Diagram)
