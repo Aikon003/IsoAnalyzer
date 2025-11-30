@@ -1730,7 +1730,7 @@ if(RSEM == TRUE) {
     if (transcriptome_indexing == FALSE) { 
         local_rsem_ref_dir <- transcriptome_genome_dir 
     } else {
-        local_rsem_ref_dir <- file.path(base_dir "/rsem_reference/GRCh38_RSEM") 
+        local_rsem_ref_dir <- file.path(base_dir, "rsem_reference/GRCh38_RSEM")  
         warning("transcriptome_indexing=TRUE in filter-only script. Assuming default ref path: ", local_rsem_ref_dir)
     }
     if (is.na(local_rsem_ref_dir) || !dir.exists(local_rsem_ref_dir)) {
