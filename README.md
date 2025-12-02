@@ -6,7 +6,6 @@ Analysis pipeline for alternative splicing events using bulk RNA-seq data
 
 This pipeline performs comprehensive RNA-Seq analysis, focusing on alignment, quantification, and the identification of alternative splicing events with functional consequence prediction. It integrates standard tools with parallelized optimization for efficiency.
 
-## Table of contents
 
 ## Table of Contents
 
