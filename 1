@@ -1,0 +1,31 @@
+def get_citation(id):
+    import requests
+    query = f'''{
+      entry(entry_id: {id}) {
+        rcsb_id
+        rcsb_accession_info {
+          initial_release_date
+        }
+        rcsb_primary_citation {
+          pdbx_database_id_DOI
+          pdbx_database_id_PubMed
+        }
+        audit_author {
+          identifier_ORCID
+          name
+        }
+        struct {
+          pdbx_descriptor
+          title
+        }
+        exptl {
+          method
+        }
+      }
+    }'''
+
+    print(query)
+
+
+get_citation('6VXX')
+        
