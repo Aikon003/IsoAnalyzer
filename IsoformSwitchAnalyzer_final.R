@@ -36,20 +36,142 @@ plot_output_dir <- file.path(analysis_dir, "Plots_Finali")
 dir.create(plot_output_dir, recursive = TRUE, showWarnings = FALSE)
 
 
-cat("Filtering significant isoform switches...\n")
 
-asl_analyzed_selected=extractTopSwitches(
-     switchList,
-     filterForConsequences=FALSE,
-     extractGenes=FALSE,
-     alpha=0.05,
-     dIFcutoff = 0.1,
-     n=Inf,
-     inEachComparison=FALSE,
-     sortByQvals=TRUE
- )
- isoform_txt <- file.path(base_dir, "Analysis", "isoforms_DTU.txt")
- write.table(asl_analyzed_selected, 'isoforms_DTU.txt', quote=F,sep='\t',row.names=F,col.names=T)
+# EXTRACT TOP SWITCHES 
+
+cat("\n--- Extracting significant isoform switches ---\n")
+
+# Extract gene expression (TPM)
+cat("Extracting gene-level TPM expression...\n")
+
+gene_expr_df <- extractGeneExpression(
+    switchAnalyzeRlist = switchList,
+    extractCounts = FALSE,
+    addGeneNames = FALSE,
+    addIdsAsColumns = TRUE
+)
+
+# Calculate mean expression across samples
+
+
+numeric_cols <- names(gene_expr_df)[
+    vapply(gene_expr_df, is.numeric, logical(1))
+]
+
+if (length(numeric_cols) == 0) {
+    stop("No numeric expression columns found in gene_expr_df.")
+}
+
+gene_expr_df$global_gene_mean <- rowMeans(
+    as.matrix(gene_expr_df[, numeric_cols, drop = FALSE]),
+    na.rm = TRUE
+)
+
+# Handle genes with no valid expression values
+gene_expr_df$global_gene_mean[
+    !is.finite(gene_expr_df$global_gene_mean)
+] <- NA_real_
+
+# Assign expression quartiles
+
+
+cat("Assigning expression quartiles...\n")
+
+valid_expr <- which(!is.na(gene_expr_df$global_gene_mean))
+
+gene_expr_df$quartile <- NA_character_
+
+gene_expr_df$quartile[valid_expr] <- paste0(
+    "Q",
+    dplyr::ntile(
+        gene_expr_df$global_gene_mean[valid_expr],
+        4
+    )
+)
+
+# Keep only the columns needed for annotation
+gene_expression_summary <- gene_expr_df[
+    ,
+    c("gene_id", "global_gene_mean", "quartile"),
+    drop = FALSE
+]
+
+# Ensure one expression record per gene
+if (anyDuplicated(gene_expression_summary$gene_id)) {
+    stop(
+        "Duplicate gene_id values found in gene_expression_summary. ",
+        "Check the output of extractGeneExpression()."
+    )
+}
+
+cat(
+    "Genes with expression data:",
+    sum(!is.na(gene_expression_summary$global_gene_mean)),
+    "\n"
+)
+
+cat("Genes per quartile:\n")
+print(table(gene_expression_summary$quartile, useNA = "ifany"))
+
+
+# D. Extract all significant isoform switches
+
+cat("Extracting top switches...\n")
+
+asl_analyzed_selected <- extractTopSwitches(
+    switchList,
+    filterForConsequences = FALSE,
+    extractGenes = FALSE,
+    alpha = 0.05,
+    dIFcutoff = 0.1,
+    n = Inf,
+    inEachComparison = FALSE,
+    sortByQvals = TRUE
+)
+
+# E. Add gene expression and quartile information
+
+cat("Annotating switches with gene expression...\n")
+
+asl_analyzed_selected <- dplyr::left_join(
+    asl_analyzed_selected,
+    gene_expression_summary,
+    by = "gene_id"
+)
+
+# Report annotation completeness
+cat(
+    "Total significant switches:",
+    nrow(asl_analyzed_selected),
+    "\n"
+)
+
+cat(
+    "Switches without gene expression:",
+    sum(is.na(asl_analyzed_selected$global_gene_mean)),
+    "\n"
+)
+
+cat("Switches per expression quartile:\n")
+print(table(asl_analyzed_selected$quartile, useNA = "ifany"))
+
+
+
+isoform_txt <- file.path(
+    analysis_dir,
+    "isoforms_DTU.txt"
+)
+
+write.table(
+    asl_analyzed_selected,
+    file = isoform_txt,
+    quote = FALSE,
+    sep = "\t",
+    row.names = FALSE,
+    col.names = TRUE
+)
+
+cat("Saved annotated DTU table to:", isoform_txt, "\n")
 
 cat("Importing protein analysis...\n")
 
@@ -192,8 +314,7 @@ extractConsequenceSummary(
   asl_data_analyzed,
   consequencesToAnalyze='all',
   plotGenes = FALSE,
-  asFractionTotal = FALSE,
-  returnResult=TRUE
+  asFractionTotal = FALSE
 )
 dev.off()
 
@@ -204,7 +325,7 @@ extractConsequenceEnrichment(
   asl_data_analyzed,
   consequencesToAnalyze='all',
   analysisOppositeConsequence = TRUE,
-  returnResult = TRUE
+  returnResult = FALSE
 )
 dev.off()
 
@@ -226,7 +347,7 @@ pdf(file=file.path(plot_output_dir, 'splicing_enrichment_comparison.pdf'), width
 extractSplicingEnrichmentComparison(
   asl_data_analyzed,
   splicingToAnalyze = c('A3','MES','ATSS','ATTS'),
-  returnResult = TRUE
+  returnResult = FALSE
 )
 
 
@@ -237,7 +358,7 @@ extractConsequenceEnrichmentComparison(
   asl_data_analyzed,
   consequencesToAnalyze=c('domains_identified','intron_retention','coding_potential'),
   analysisOppositeConsequence = TRUE,
-  returnResult = TRUE
+  returnResult = FALSE
 )
 
 # Compare DTUs between comparisons (Venn Diagram)
