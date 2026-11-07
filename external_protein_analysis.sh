@@ -16,6 +16,10 @@ AA_FASTA="$2"
 CPU="$3"
 OUTPUT_DIR="$4"
 
+mkdir -p "$OUTPUT_DIR/Analysis/Protein"
+
+Protein_OUTPUT_DIR="$OUTPUT_DIR/Analysis/Protein"
+
 CONDA_ACTIVATE_SCRIPT="/opt/conda/bin/activate" 
 
 if [ ! -f "$NT_FASTA" ]; then echo "Error: NT file not found: $NT_FASTA"; exit 1; fi
@@ -23,7 +27,7 @@ if [ ! -f "$AA_FASTA" ]; then echo "Error: AA file not found: $AA_FASTA"; exit 1
 
 echo "--- Phase 6: Starting External Analysis ---"
 echo "Cores to use: $CPU"
-echo "Output Directory: $OUTPUT_DIR"
+echo "Output Directory: $Protein_OUTPUT_DIR"
 echo "------------------------------------------"
 
 # --- 2. STEP 6.1: CPAT (Coding Potential) ---
@@ -37,7 +41,7 @@ echo "[1/4] Starting CPAT..."
   cpat.py -g "$NT_FASTA" \
           -d /usr/share/cpat_data/Human_logitModel.RData \
           -x /usr/share/cpat_data/Human_Hexamer.tsv \
-          -o "$OUTPUT_DIR/cpat_output.txt"
+          -o "$Protein_OUTPUT_DIR/cpat_output.txt"
 )
 echo "CPAT completed."
 
@@ -52,7 +56,7 @@ echo "[2/4] Starting Pfam (Protein Domains)..."
   
   pfam_scan.pl -fasta "$AA_FASTA" \
                -dir /usr/share/pfam_data \
-               -outfile "$OUTPUT_DIR/pfam_output.txt" \
+               -outfile "$Protein_OUTPUT_DIR/pfam_output.txt" \
                -cpu "$CPU"
 )
 echo "Pfam completed."
@@ -62,16 +66,16 @@ echo "Pfam completed."
 echo "[3/4] Starting SignalP (Signal Peptides)..."
 
 OriginalD=$(pwd)
-mkdir -p "$OUTPUT_DIR/signalp_temp"
+mkdir -p "$Protein_OUTPUT_DIR/signalp_temp"
 
 cd "/usr/share/signalp-5.0b/bin"
 
 ./signalp -fasta "$AA_FASTA" \
         -org euk \
         -format short \
-        -prefix "$OUTPUT_DIR/signalp_output" \
-        -tmp "$OUTPUT_DIR/signalp_temp"
-rm -rf "$OUTPUT_DIR/signalp_temp"
+        -prefix "$Protein_OUTPUT_DIR/signalp_output" \
+        -tmp "$Protein_OUTPUT_DIR/signalp_temp"
+rm -rf "$Protein_OUTPUT_DIR/signalp_temp"
 echo "SignalP completed."
 
 cd "$OriginalD"
@@ -80,8 +84,8 @@ cd "$OriginalD"
 
 # --- 5. STEP 6.4: IUPred2A (Disordered Regions) ---
 echo "[4/4] Starting IUPred2A (using Python 3.7)..."
-SPLIT_DIR="$OUTPUT_DIR/iupred_split_fasta"
-IUPRED_FINAL_OUT="$OUTPUT_DIR/iupred2a_output.txt"
+SPLIT_DIR="$Protein_OUTPUT_DIR/iupred_split_fasta"
+IUPRED_FINAL_OUT="$Protein_OUTPUT_DIR/iupred2a_output.txt"
 mkdir -p "$SPLIT_DIR"
 rm -f "$IUPRED_FINAL_OUT"
 
@@ -129,7 +133,7 @@ for f in iupred2a_output_*.fa.txt; do
     echo -e "\n\n################" >> "$IUPRED_FINAL_OUT"
 done
 
-cd "$OUTPUT_DIR"
+cd "$Protein_OUTPUT_DIR"
 rm -rf "$SPLIT_DIR"
 echo "IUPred2A completed."
 
@@ -137,4 +141,4 @@ echo "IUPred2A completed."
 
 echo "------------------------------------------"
 echo "--- Phase 6 Completed ---"
-echo "All output files have been created in: $OUTPUT_DIR"
+echo "All output files have been created in: $Protein_OUTPUT_DIR"
