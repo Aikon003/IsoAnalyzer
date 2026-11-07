@@ -1448,11 +1448,11 @@ if (IsoformSwitch == TRUE) {
 #------------------------------------------------------------------------------
 # Gene table output filtering
 #------------------------------------------------------------------------------
-
-if (Rmats || Spladder_any || RSEM) {
-
+ 
+if (Rmats || Spladder_any || RSEM || IsoformSwitch) {
+ 
   cat("\n--- Starting Output Filtering ---\n")
-
+ 
   # common thresholds
   fdr_cutoff <- 0.05
   pval_cutoff <- 0.01
@@ -1460,31 +1460,31 @@ if (Rmats || Spladder_any || RSEM) {
   jc_min <- 5
   tpm_cutoff <- 1
   count_cutoff <- 10
-
+ 
   # -----------------------------------------------------
   # 1. rMATS filtering (per cell line)
   # -----------------------------------------------------
   if (Rmats == TRUE) {
     cat("Processing rMATS output...\n")
-
+ 
     event_types_rmats <- c("SE", "A3SS", "A5SS", "MXE", "RI")
-
+ 
     get_JCcounts <- function(x) {
       vals <- suppressWarnings(as.numeric(strsplit(as.character(x), ",")[[1]]))
       sum(vals[!is.na(vals)])
     }
-
+ 
     for (spec in cell_line_specs) {
       cl_safe <- safe_name(spec$cell_line)
       input_dir_rmats <- file.path(base_dir, "rmatsout", cl_safe, "OD")
       output_dir_rmats <- file.path(base_dir, "rmatsout", cl_safe, "Filtered_rMATS")
       dir.create(output_dir_rmats, showWarnings = FALSE, recursive = TRUE)
-
+ 
       if (!dir.exists(input_dir_rmats)) {
         warning("rMATS output directory not found: ", input_dir_rmats, ". Skipping rMATS filtering.")
         next
       }
-
+ 
       for (etype in event_types_rmats) {
         file_path <- file.path(input_dir_rmats, paste0(etype, ".MATS.JC.txt"))
         if (!file.exists(file_path)) {
@@ -1492,16 +1492,16 @@ if (Rmats || Spladder_any || RSEM) {
           next
         }
         cat("  [", spec$cell_line, "] Filtering:", basename(file_path), "\n")
-
+ 
         tryCatch({
           df <- read_tsv(file_path, show_col_types = FALSE)
-
+ 
           required_cols_rmats <- c("GeneID", "geneSymbol", "IJC_SAMPLE_1", "SJC_SAMPLE_1",
                                    "IJC_SAMPLE_2", "SJC_SAMPLE_2", "PValue", "FDR", "IncLevelDifference")
           if (!all(required_cols_rmats %in% colnames(df))) {
             stop("One or more required rMATS columns missing. Found: ", paste(colnames(df), collapse = ", "))
           }
-
+ 
           # column 12 is the event ID (the file has two columns named "ID")
           df_filtered <- df %>%
             dplyr::select(GeneID, geneSymbol, ID = 12,
@@ -1521,7 +1521,7 @@ if (Rmats || Spladder_any || RSEM) {
               !is.na(PValue) & PValue < pval_cutoff
             ) %>%
             dplyr::select(GeneID, geneSymbol, ID, PValue, FDR, IncLevelDifference, TotalCount)
-
+ 
           if (nrow(df_filtered) > 0) {
             write_tsv(df_filtered, file.path(output_dir_rmats, paste0(etype, "_filtered.tsv")))
             cat("    Filtered results saved. Kept", nrow(df_filtered), "events.\n")
@@ -1537,51 +1537,51 @@ if (Rmats || Spladder_any || RSEM) {
   } else {
     cat("\nRmats set to FALSE. Skipping rMATS filtering.\n")
   }
-
+ 
   # -----------------------------------------------------
   # 2. SplAdder filtering (per cell line)
   # -----------------------------------------------------
   if (Spladder_any) {
     cat("Processing SplAdder output...\n")
-
+ 
     for (sp in spladder_specs) {
       input_dir_spladder <- file.path(spladder_out, sp$testcase)
       output_dir_spladder <- file.path(spladder_out, "Filtered_SplAdder", sp$cl_safe)
       dir.create(output_dir_spladder, showWarnings = FALSE, recursive = TRUE)
-
+ 
       if (!dir.exists(input_dir_spladder)) {
         warning("SplAdder output directory not found: ", input_dir_spladder, ". Skipping SplAdder filtering.")
         next
       }
-
+ 
       spladder_files <- list.files(input_dir_spladder, pattern = "^test_results_C3_.*\\.tsv$", full.names = TRUE)
       spladder_files <- spladder_files[!grepl("\\.gene_unique\\.", spladder_files)]
       if (length(spladder_files) == 0) {
         cat("  [", sp$cell_line, "] No SplAdder result files (*_C3_*.tsv) found in", input_dir_spladder, "\n")
       }
-
+ 
       for (file_path in spladder_files) {
         cat("  [", sp$cell_line, "] Filtering:", basename(file_path), "\n")
-
+ 
         event_type_spladder <- str_match(basename(file_path), "test_results_C3_(.+)\\.tsv")[, 2]
         if (is.na(event_type_spladder)) event_type_spladder <- "unknown"
-
+ 
         tryCatch({
           df <- read_tsv(file_path, show_col_types = FALSE)
-
+ 
           required_cols <- c("p_val_adj", "dPSI", "mean_event_count_A", "mean_event_count_B", "p_val")
           if (!all(required_cols %in% colnames(df))) {
             warning("    Skipping file ", basename(file_path), ": missing one or more required columns (",
                     paste(required_cols, collapse = ", "), "). Available columns: ", paste(colnames(df), collapse = ", "))
             next
           }
-
+ 
           df_filtered <- df %>%
             dplyr::mutate(TotalMeanCount = mean_event_count_A + mean_event_count_B) %>%
             dplyr::filter(!is.na(p_val) & p_val < pval_cutoff) %>%
             dplyr::select(any_of(c("gene_id", "gene_name", "event_id", "chrm", "exon_pos",
                                    "p_val", "p_val_adj", "dPSI", "TotalMeanCount")))
-
+ 
           if (nrow(df_filtered) > 0) {
             write_tsv(df_filtered, file.path(output_dir_spladder, paste0(event_type_spladder, "_filtered.tsv")))
             cat("    Filtered results saved. Kept", nrow(df_filtered), "events.\n")
@@ -1594,9 +1594,9 @@ if (Rmats || Spladder_any || RSEM) {
       }
     }
     cat("SplAdder filtering complete.\n")
-
+ 
     # move folder if needed
-
+ 
     # Test and Viz: the results were written inside the graph folder, move them to this run
     if (Spladder_mode == "test_viz") {
       dest <- file.path(base_dir, "spladder")
@@ -1610,29 +1610,39 @@ if (Rmats || Spladder_any || RSEM) {
         if (dir.exists(src)) check_status(system2("mv", c(shQuote(src), shQuote(file.path(dest, "Filtered_SplAdder")))), paste("mv filtered", sp$cl_safe))
       }
     }
-
-
-
-
+ 
+ 
+ 
+ 
   } else {
     cat("\nSpladder set to False. Skipping SplAdder filtering.\n")
   }
-
+ 
   # -----------------------------------------------------
   # 3. RSEM filtering
   # -----------------------------------------------------
   rsem_filter_input <- if (RSEM) file.path(base_dir, "Transcriptome", "counts") else rsem_counts_dir
-
+ 
   if ((RSEM || IsoformSwitch) && !is.na(rsem_filter_input) && dir.exists(rsem_filter_input)) {
     cat("Processing RSEM output...\n")
-
+ 
     output_dir_rsem <- file.path(base_dir, "Transcriptome", "Filtered_RSEM")
     dir.create(output_dir_rsem, showWarnings = FALSE, recursive = TRUE)
-
+ 
+    # only the samples listed in table.xlsx (the counts folder can contain other samples)
     sample_dirs <- list.dirs(rsem_filter_input, full.names = TRUE, recursive = FALSE)
-
+    n_in_folder <- length(sample_dirs)
+    sample_dirs <- sample_dirs[basename(sample_dirs) %in% table$sample_ID]
+    cat("  RSEM sample folders found:", n_in_folder, "| in table.xlsx:", length(sample_dirs),
+        "| ignored:", n_in_folder - length(sample_dirs), "\n")
+    no_rsem_dir <- setdiff(table$sample_ID, basename(sample_dirs))
+    if (length(no_rsem_dir) > 0) {
+      warning("Samples in table.xlsx without a folder in ", rsem_filter_input, ": ",
+              paste(no_rsem_dir, collapse = ", "))
+    }
+ 
     if (length(sample_dirs) == 0) {
-      warning("No sample directories found in: ", rsem_filter_input, ". Skipping RSEM filtering.")
+      warning("No sample directories of table.xlsx found in: ", rsem_filter_input, ". Skipping RSEM filtering.")
     } else {
       filter_rsem_file <- function(file, out_file, label) {
         if (!file.exists(file)) { cat("    File not found:", basename(file), "\n"); return(invisible(NULL)) }
@@ -1654,13 +1664,13 @@ if (Rmats || Spladder_any || RSEM) {
           cat("    Error processing file:", basename(file), "-", e$message, "\n")
         })
       }
-
+ 
       for (sample_dir in sample_dirs) {
         sample_id <- basename(sample_dir)
         cat("  Filtering RSEM results for sample:", sample_id, "\n")
         sample_output_dir <- file.path(output_dir_rsem, sample_id)
         dir.create(sample_output_dir, showWarnings = FALSE, recursive = TRUE)
-
+ 
         filter_rsem_file(file.path(sample_dir, paste0(sample_id, ".genes.results")),
                          file.path(sample_output_dir, paste0(sample_id, ".genes.results_filtered.tsv")), "genes")
         filter_rsem_file(file.path(sample_dir, paste0(sample_id, ".isoforms.results")),
@@ -1671,9 +1681,9 @@ if (Rmats || Spladder_any || RSEM) {
   } else {
     cat("\nNo RSEM output to filter. Skipping RSEM filtering.\n")
   }
-
+ 
   cat("\n--- All selected filtering steps finished! ---\n")
-
+ 
 } else {
-  cat("\n--- No filtering steps selected (Rmats, Spladder, RSEM are all off) ---\n")
+  cat("\n--- No filtering steps selected (Rmats, Spladder, RSEM, IsoformSwitch are all off) ---\n")
 }
