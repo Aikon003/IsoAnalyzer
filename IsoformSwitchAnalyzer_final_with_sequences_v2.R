@@ -139,6 +139,19 @@ asl_analyzed_selected <- dplyr::left_join(
     by = "gene_id"
 )
 
+# Strand (+/-) of each isoform, from the exon annotation
+iso_strand <- unique(as.data.frame(switchList$exons)[, c("isoform_id", "strand")])
+iso_strand$strand <- as.character(iso_strand$strand)
+
+if (anyDuplicated(iso_strand$isoform_id)) {
+  stop("Some isoforms have exons on more than one strand: check the GTF.")
+}
+
+asl_analyzed_selected <- dplyr::left_join(asl_analyzed_selected, iso_strand, by = "isoform_id")
+
+cat("Switches without strand:", sum(is.na(asl_analyzed_selected$strand)), "\n")
+
+
 # Report annotation completeness
 cat(
     "Total significant switches:",
